@@ -1,0 +1,19 @@
+div.dataTables_paginate {
+  padding-top: 0.4em;
+}
+
+.control-label {
+  font-weight: bolder;
+}
+
+.swal2-popup {
+  font-size: 1.1rem !important;
+}
+
+.swal2-html-container {
+  text-align: left;
+}
+
+.swal2-title {
+  font-weight: bolder;
+}
