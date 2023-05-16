@@ -89,6 +89,9 @@ ui = page_navbar(title = strong("Internship Database"),
                  actionButton("info", 
                               icon = icon("info"), 
                               label = " Navigation"), 
+                 actionButton("tips", 
+                              icon = icon("lightbulb"),
+                              label = " Tips"),
                  align = "right"
                ),
                h3(strong("Your Internships")),
@@ -366,6 +369,24 @@ server = function(input, output) {
               )
         ),
         html = TRUE # you must include this new argument
+      )
+    }
+  )
+  observeEvent(
+    eventExpr = input$tips,
+    handlerExpr = {
+      sendSweetAlert(
+        closeOnClickOutside = T, 
+        title = "Tips", 
+        text = tags$span(
+          "Some formatting tips:", 
+          br(), 
+          tags$ul(
+            tags$li('Links: <a href="Your Link">Text to show</a>'), 
+            tags$li("Line break: <br/>")
+          )
+        ), 
+        html = T
       )
     }
   )
