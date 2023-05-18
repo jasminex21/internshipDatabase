@@ -8,6 +8,9 @@ library(DT)
 library(bslib)
 library(shinycustomloader)
 library(shinyWidgets)
+library(htmltools)
+library(plotly)
+library(shinycssloaders)
 
 databaseName = "Applications"
 tableName = "Positions"
@@ -19,7 +22,8 @@ allFields = c(requiredFields,
               "roleDescription",
               "appliedDate",
               "tags", 
-              "addlNotes")
+              "addlNotes", 
+              "cycle")
 updatesReqFields = c("ID", 
                      "status")
 updatesAllFields = c(updatesReqFields, 
@@ -42,12 +46,111 @@ loadResponses <- function() {
   data
 }
 
+choicesCycle = c("Summer 2023", "Fall 2023", "Summer 2024", "Other")
 
 listOfTags = c(paste0(emo::ji("heart"), "Favorite"), 
                paste0(emo::ji("purple heart"), "Hopeful"), 
                paste0(emo::ji("cross mark"), "Long shot"), 
                paste0(emo::ji("question"), "Preferred qualifs. not met"), 
                paste0(emo::ji("woman_technologist"), "Remote"))
+
+
+cardAppResources = card(
+  card_header(class = "bg-dark", 
+              strong("Find Internships")), 
+  card_body(
+    markdown("
+      Some good places to find and apply for internships: 
+      * [LinkedIn](https://www.linkedin.com/)
+      * [Handshake](https://joinhandshake.com/)
+      * [Indeed](https://www.indeed.com/)
+      * [Levels.fyi](https://www.levels.fyi/jobs)
+      * [Wellfound](https://wellfound.com/jobs): startup-focused
+      * [RemoteOk](https://remoteok.com/): remote positions
+      * [BuiltIn](https://builtin.com/jobs): tech positions in tech hubs
+      * [Summer 2024 Tech Internships Repo](https://github.com/pittcsc/Summer2023-Internships/blob/dev/README-2024.md)
+      
+      Other sites: 
+      * [Simplify](https://simplify.jobs/l/Best-Remote-Internships): a collection of remote-friendly internship opportunities currently hiring for roles ranging across tech, finance, marketing, HR, and more
+      * [StillHiring.today](https://stillhiring.today/): list of tech companies that are still (actually) hiring
+      * [Otta](https://app.otta.com/jobs): tech jobs tailored to your preferences
+      * [freshSWE](https://www.freshswe.com/): hand-picked, daily updated list with jobs for students, bootcampers, and self-taught devs with zero to little experience
+      * [A nice spreadsheet of job links](https://docs.google.com/spreadsheets/d/1O2om9Zqdvtj76ChYetzOlcBjDHqAdZnybTJ7g0HkB5k/edit#gid=838463087)
+      * [Spreadsheet of top underclassmen internships](https://docs.google.com/spreadsheets/d/1TSgC8ET1WT8Y9nh7UdJXlsMHChQwkgJdZESxAOQ20vQ/edit#gid=0)
+      * [Canadian Tech Internships Repo](https://github.com/jenndryden/Canadian-Tech-Internships-Summer-2023)
+             "
+    )
+  )
+)
+
+cardMiscResources = card(
+  card_header(class = "bg-dark", 
+              strong("Other Resources")), 
+  card_body(
+    markdown("
+             Miscellaneous resources to help strengthen your application: 
+             * [How to prepare for FAANG+ interviews](https://medium.com/@stevenzhang/how-i-landed-18-faang-software-engineer-offers-after-not-interviewing-for-5-years-fc0dfc957a5d)
+             * [InternshipGirl Linktree](https://linktr.ee/internshipgirl)
+             * [Class Central](https://www.classcentral.com/): find (free) certificate programs
+             * [Harvard Action Verbs](https://hls.harvard.edu/bernard-koteen-office-of-public-interest-advising/opia-job-search-toolkit/action-verbs/)
+             * [Harvard Action Verbs (categorised)](https://www.alumni.hbs.edu/Documents/careers/ActionVerbsList.pdf)
+             * [A Guide to Technical Interviews](https://www.techinterviewhandbook.org/)
+             * [64 of the toughest interview questions](https://cdn.discordapp.com/attachments/1032934764849668128/1046628188584939620/64-Toughest-Interview-Questions.pdf)
+             * [Coding Interview University](https://github.com/jwasham/coding-interview-university)
+             * [Build-Your-Own-X](https://github.com/codecrafters-io/build-your-own-x): step-by-step guides on how to recreate your favorite technologies from scratch
+             * [Client and Server-Side Web Dev.](https://drstearns.github.io/tutorials/): comprehensive list of tutorials (HTML, CSS, JS)
+             * [Leetcode](https://leetcode.com/)
+             ")
+  )
+)
+
+cardTips = card(
+  card_header(class = "bg-dark", 
+              strong("General Tips")), 
+  card_body(
+    markdown(
+      '
+      Resume Tips:
+      * Use the X by Y by Z formula, i.e. "accomplished [X] as measured by [Y], by doing [Z]"
+        * See [this article](https://www.inc.com/bill-murphy-jr/google-recruiters-say-these-5-resume-tips-including-x-y-z-formula-will-improve-your-odds-of-getting-hired-at-google.html)
+      * Use (a variety of) action verbs - see Harvard-compiled lists
+      * ChatGPT can help summarise your bullet points (but you\'ll likely need to refine it)
+      
+      Interview Tips:
+      * If you feed ChatGPT your resume and the job description, it can come up with some great interview questions 
+      '
+    )
+  )
+)
+
+cardFilter = card(
+  card_header(class = "bg-dark", 
+              strong("Statistics by Application Cycle")), 
+  card_body(
+    selectInput("selectCycle", 
+                label = "Application cycle", 
+                choices = choicesCycle, 
+                selected = 1), 
+    br(),
+    layout_column_wrap(
+      width = 1/2,
+      withLoader(plotlyOutput("cycleResponses", 
+                              height = "200px"), 
+                 type = "html", 
+                 loader = "loader1"),
+      withLoader(plotlyOutput("cycleAcceptance", 
+                              height = "200px"), 
+                 type = "html", 
+                 loader = "loader1")
+    ), 
+    br(), 
+    layout_column_wrap(
+      width = 1/2, 
+      uiOutput("cycleResponsesComm"), 
+      uiOutput("cyclesAccComm")
+    )
+  )
+)
 
 
 ui = page_navbar(title = strong("Internship Database"),
@@ -64,6 +167,10 @@ ui = page_navbar(title = strong("Internship Database"),
                                                         value = today(),
                                                         max = today(),
                                                         format = "mm-dd-yyyy"),
+                                              selectInput("cycle", 
+                                                          label = "Application Cycle", 
+                                                          choices = choicesCycle, 
+                                                          selected = 1),
                                               textInput("positionTitle",
                                                          label = "Position",
                                                          placeholder = "Data Science Intern"),
@@ -87,13 +194,14 @@ ui = page_navbar(title = strong("Internship Database"),
                ),
                column(12,
                  actionButton("info", 
-                              icon = icon("info"), 
+                              icon = icon("circle-info"), 
                               label = " Navigation"), 
                  actionButton("tips", 
                               icon = icon("lightbulb"),
                               label = " Tips"),
                  align = "right"
                ),
+               br(),
                h3(strong("Your Internships")),
                br(),
                downloadButton("downloadButton",
@@ -107,15 +215,18 @@ ui = page_navbar(title = strong("Internship Database"),
                        width = 330, 
                        div(id = "updateForm",
                          textInput("ID", 
-                                   label = "ID"),
+                                   label = "ID", 
+                                   placeholder = "21"),
                          radioButtons("status",
                                       label = "Status", 
                                       choices = c("Accepted" = "Accepted", 
-                                                  "Rejected" = "Rejected"), 
+                                                  "Rejected" = "Rejected", 
+                                                  "Interview" = "Interview"), 
                                       selected = "Rejected"), 
                          textAreaInput("notes", 
                                        label = "Additional notes", 
-                                       resize = "vertical"), 
+                                       resize = "vertical", 
+                                       placeholder = "Final comments about this position"), 
                          actionButton("submitUpdate", 
                                       label = "Submit"))
                      ), 
@@ -131,9 +242,12 @@ ui = page_navbar(title = strong("Internship Database"),
                      sidebar(# position = "right", 
                        width = "330",
                        # open = TRUE, 
+                       p(strong("Please check your query BEFORE submitting, especially when altering or updating!")),
+                       # hr(),
                        textAreaInput("query", 
                                      label = "Your query", 
-                                     resize = "vertical"), 
+                                     resize = "vertical", 
+                                     placeholder = "SELECT * FROM Positions"), 
                        actionButton("submitQuery", 
                                     label = "Submit"), 
                        hr(),
@@ -142,12 +256,18 @@ ui = page_navbar(title = strong("Internship Database"),
                          tags$ul(
                            tags$li(paste0("Positions: ", paste0(c("ID", allFields), collapse = ", "))), 
                            tags$li(paste0("Updates: ID, status, notes")), 
-                           tags$li(paste0("Results: ID, positionTitle, companyName, tags, status, notes"))
+                           tags$li(paste0("Results: ID, positionTitle, companyName, tags, status, notes, cycle"))
                          )
                        ),
                        # hr(), 
                        # actionButton("clearFilters", 
                        #              label = "Clear filters"),
+                     ),
+                     column(12,
+                            actionButton("sqlTips", 
+                                         icon = icon("lightbulb"), 
+                                         label = " SQL Tips"),
+                            align = "right"
                      ),
                      conditionalPanel(
                        condition = "input.submitQuery == 0", 
@@ -166,7 +286,33 @@ ui = page_navbar(title = strong("Internship Database"),
                      )
                      # border = FALSE
                    )
-               )
+               ), 
+               nav(title = strong("Resources"), 
+                   fluidRow(
+                     column(2),
+                     column(4,
+                      value_box(title = strong("Response Rate"), 
+                               value = h4(strong(textOutput("responsesPercent"))), 
+                               showcase = plotlyOutput("responsesDonut"), 
+                               p(textOutput("responsesComm")),
+                               # full_screen = T, 
+                               theme_color = "light", 
+                               height = "170px")), 
+                     column(4, 
+                            value_box(title = strong("Acceptance Rate"),
+                                      value = h4(strong(textOutput("acceptanceRate"))),
+                                      showcase = plotlyOutput("statusDonut"), 
+                                      p(textOutput("statusComm")), 
+                                      theme_color = "light", 
+                                      height = "170px")), 
+                     column(2)),
+                   br(), 
+                   layout_column_wrap(
+                     width = 1/2, 
+                     height = 1100, 
+                     cardAppResources, cardFilter, cardMiscResources, cardTips
+                   ) 
+                   )
 )
 
 server = function(input, output) {
@@ -206,18 +352,20 @@ server = function(input, output) {
       responses_data(),
       rownames = FALSE,
       escape = F,
+      selection = "none",
       colnames = c("Date" = "appliedDate", 
                    "Position" = "positionTitle", 
                    "Company" = "companyName", 
                    "Description" = "roleDescription", 
                    "Tags" = "tags",  
-                   "Notes" = "addlNotes"),
+                   "Notes" = "addlNotes", 
+                   "Cycle" = "cycle"),
       options = list(scrollX = TRUE, 
                      pageLength = 5,
                      search.regex = TRUE,
-                     columnDefs = (list(list(width = '110px', targets = c("appliedDate")), 
+                     columnDefs = (list(list(width = '110px', targets = c("appliedDate", "cycle")), 
                                         list(width = "150px", targets = c("positionTitle", "companyName")), 
-                                        list(width = "250px", targets = c("tags")),
+                                        list(width = "230px", targets = c("tags")),
                                         list(width = "325px", targets = c("roleDescription", "addlNotes")))))
     )
   })
@@ -251,13 +399,13 @@ server = function(input, output) {
   
   output$queryTable = renderDataTable({
     if (grepl("SELECT * FROM POSITIONS", str_to_upper(input$query), fixed = T)) {
-      columnDefs = (list(list(width = '110px', targets = c("appliedDate")), 
+      columnDefs = (list(list(width = '110px', targets = c("appliedDate", "cycle")), 
                          list(width = "150px", targets = c("positionTitle", "companyName")), 
-                         list(width = "250px", targets = c("tags")),
+                         list(width = "230px", targets = c("tags")),
                          list(width = "325px", targets = c("roleDescription", "addlNotes"))))
     }
     else if (grepl("SELECT * FROM RESULTS", str_to_upper(input$query), fixed = T)) {
-      columnDefs = (list(list(width = "300px", targets = c("positionTitle", "companyName", "tags")), 
+      columnDefs = (list(list(width = "300px", targets = c("positionTitle", "companyName", "tags", "cycle")), 
                          list(width = "350px", targets = c("notes"))))
     }
     else {
@@ -266,7 +414,8 @@ server = function(input, output) {
     DT::datatable(
       query_data(),
       rownames = FALSE,
-      escape = F, 
+      escape = F,
+      selection = "none",
       options = list(scrollX = TRUE,
                      pageLength = 5,
                      search.regex = TRUE,
@@ -301,8 +450,8 @@ server = function(input, output) {
     addResponses(updateInpData(), otherTable)
     db <- dbConnect(SQLite(), databaseName)
     query = paste0(
-      "INSERT INTO ", finalTable, "(ID, positionTitle, companyName, tags, status, notes) ", 
-      "SELECT u.ID, p.positionTitle, p.companyName, p.tags, u.status, u.notes ", 
+      "INSERT INTO ", finalTable, "(ID, positionTitle, companyName, tags, status, notes, cycle) ", 
+      "SELECT u.ID, p.positionTitle, p.companyName, p.tags, u.status, u.notes, p.cycle ", 
       "FROM ", otherTable, " u ", 
       "LEFT JOIN ", tableName, " p ", 
       "ON u.ID = p.ID ", 
@@ -329,15 +478,17 @@ server = function(input, output) {
       results_data(), 
       rownames = FALSE,
       escape = F, 
+      selection = "none",
       colnames = c("Position" = "positionTitle", 
                    "Company" = "companyName", 
                    "Tags" = "tags",  
                    "Status" = "status",
-                   "Notes" = "notes"), 
+                   "Notes" = "notes", 
+                   "Cycle" = "cycle"), 
       options = list(scrollX = TRUE, 
                      pageLength = 5,
                      search.regex = TRUE,
-                     columnDefs = (list(list(width = "300px", targets = c("positionTitle", "companyName", "tags")), 
+                     columnDefs = (list(list(width = "300px", targets = c("positionTitle", "companyName", "tags", "cycle")), 
                                         list(width = "350px", targets = c("notes")))))
     )
   })
@@ -365,7 +516,8 @@ server = function(input, output) {
               tags$ul(
                 tags$li(tags$u("Create Entries:"), "enter information about each internship you apply for"),
                 tags$li(tags$u("Track Offers/Rejections:"), "track the internships you've heard back from"),
-                tags$li(tags$u("Filter Entries:"), "use SQLite commands to filter or alter tables")
+                tags$li(tags$u("Filter Entries:"), "use SQLite commands to filter or alter tables"), 
+                tags$li(tags$u("Resources:"), "statistics and general resources to guide you in the application cycle")
               )
         ),
         html = TRUE # you must include this new argument
@@ -382,7 +534,7 @@ server = function(input, output) {
           "Some formatting tips:", 
           br(), 
           tags$ul(
-            tags$li('Links: <a href="Your Link">Text to show</a>'), 
+            tags$li('Links: <a href="Your Link" target="_blank">Text to show</a>'), 
             tags$li("Line break: <br/>")
           )
         ), 
@@ -390,7 +542,131 @@ server = function(input, output) {
       )
     }
   )
+  observeEvent(
+    eventExpr = input$sqlTips,
+    handlerExpr = {
+      sendSweetAlert(
+        closeOnClickOutside = T, 
+        title = "SQL Tips", 
+        text = tags$span(
+          "Some SQL tips:", 
+          br(), 
+          tags$ul(
+            tags$li('Deleting an entry: DELETE FROM {tableName} WHERE {ID} = {value}'),
+            tags$li("Updating value in an entry: UPDATE {tableName} SET {colName} = {newValue} WHERE {ID} = {value}")
+          )
+        ), 
+        html = T
+      )
+    }
+  )
+  plotDonut = function(data, palette, txtInfo = NULL) {
+    donut = data %>%
+      plot_ly(labels = ~Status, values = ~Count, 
+              showlegend = F, 
+              marker = list(colors = palette), 
+              text = ~paste0(round(Count / sum(Count) * 100, 2), "%"),
+              textinfo = txtInfo,
+              hoverinfo = "label+text") %>%
+      add_pie(hole = 0.2) %>%
+      layout(
+        hovermode = "x",
+        margin = list(t = 0, r = 0, l = 0, b = 0),
+        font = list(color = "white"),
+        paper_bgcolor = "transparent",
+        plot_bgcolor = "transparent"
+      ) %>%
+      config(displayModeBar = F)
+  }
+  output$responsesDonut = renderPlotly({
+    palette = c("#B7A5E9", "#E7A08E")
+    forRDonut = data.frame(
+      Status = c("Received Response", "No Response"), 
+      Count = c(nrow(results_data()), nrow(responses_data()) - nrow(results_data()))
+    )
+    donut = plotDonut(forRDonut, palette)
+  })
+  output$responsesPercent = renderText({
+    percent = round(nrow(results_data()) / nrow(responses_data()) * 100, 2)
+    paste0(percent, "%")
+  })
   
+  output$responsesComm = renderText({
+    paste0("Of ", nrow(responses_data()), " applications, you've received ", nrow(results_data()), " responses, and have not heard back from ", nrow(responses_data()) - nrow(results_data()))
+  })
+  
+  output$statusDonut = renderPlotly({
+    palette = c("#98BD8A", "#DD7D7D")
+    forSDonut = data.frame(
+      Status = c("Accepted", "Rejected"), 
+      Count = c(nrow(results_data() %>%
+                       filter(status == "Accepted")), 
+                nrow(results_data() %>%
+                       filter(status == "Rejected")))
+    )
+    donut = plotDonut(forSDonut, palette)
+  })
+  
+  output$statusComm = renderText({
+    solidStatus = nrow(results_data() %>%
+                         filter(status != "Interview"))
+    accepted = nrow(results_data() %>%
+                      filter(status == "Accepted"))
+    paste0("Of the ", solidStatus, " applications you've (completely) heard back from, you've been accepted to ", accepted, " and rejected to ", solidStatus - accepted, " of them")
+  })
+  
+  output$acceptanceRate = renderText({
+    solidStatus = nrow(results_data() %>%
+                         filter(status != "Interview"))
+    accepted = nrow(results_data() %>%
+                      filter(status == "Accepted"))
+    paste0(round((accepted / solidStatus) * 100, 2), "%")
+  })
+  
+  cycleResponsesData = reactive({
+    data = responses_data() %>%
+      filter(cycle == input$selectCycle)
+  })
+  
+  cycleResultsData = reactive({
+    data = results_data() %>%
+      filter(cycle == input$selectCycle)
+  })
+  
+  output$cycleResponses = renderPlotly({
+    palette = c("#B7A5E9", "#E7A08E")
+    cyclePData = data.frame(
+      Status = c("Received Response", "No Response"), 
+      Count = c(nrow(cycleResultsData()), 
+                nrow(cycleResponsesData()) - nrow(cycleResultsData()))
+    )
+    donut = plotDonut(cyclePData, palette, "text")
+  })
+  
+  output$cycleAcceptance = renderPlotly({
+    palette = c("#98BD8A", "#DD7D7D")
+    solidStatus = nrow(cycleResultsData() %>%
+                         filter(status != "Interview"))
+    accepted = nrow(cycleResultsData() %>%
+                      filter(status == "Accepted"))
+    cycleRData = data.frame(
+      Status = c("Accepted", "Rejected"), 
+      Count = c(accepted, solidStatus - accepted)
+    )
+    donut = plotDonut(cycleRData, palette, "text")
+  })
+  
+  output$cycleResponsesComm = renderUI({
+    HTML(paste0("Of ", strong(nrow(cycleResponsesData())), " applications for the ", strong(input$selectCycle), " cycle, you've received ", strong(nrow(cycleResultsData())), " responses, and have not heard back from ", strong(nrow(cycleResponsesData()) - nrow(cycleResultsData()))))
+  })
+  
+  output$cyclesAccComm = renderUI({
+    solidStatus = nrow(cycleResultsData() %>%
+                         filter(status != "Interview"))
+    accepted = nrow(cycleResultsData() %>%
+                      filter(status == "Accepted"))
+    HTML(paste0("Of the ", strong(solidStatus), " applications you've (completely) heard back from for the ", strong(input$selectCycle), " cycle, you've been accepted to ", strong(accepted), " and rejected to ", strong(solidStatus - accepted), " of them"))
+  })
 }
 
 shinyApp(ui = ui, server = server)
