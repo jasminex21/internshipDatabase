@@ -8,7 +8,7 @@ Last semester I had a hard time managing my internship applications, and these t
 
 ### The app: 
 
-There are three tabs: 
+There are four tabs: 
 
 - **Create entries**: enter information about each internship you apply for
 
@@ -21,3 +21,8 @@ There are three tabs:
 - **Filter Entries**: use SQLite commands to filter or alter tables
 
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/6f0c494c-157b-49de-90eb-e04bd14b655f)
+
+- **Resources**: statistics and resources to guide you during the application cycle
+
+![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/1846161f-193e-4c40-8882-fda37b1dcb2d)
+
