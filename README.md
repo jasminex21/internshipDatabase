@@ -26,3 +26,5 @@ There are four tabs:
 
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/1846161f-193e-4c40-8882-fda37b1dcb2d)
 
+### Further steps:
+- It'd be nice to be able to clean up the "Your Entries" table such that it can be filtered by whether a response has been recieved. Right now it's just a big conglomeration of applications and it's hard to tell what exactly I'm looking at. 
