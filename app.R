@@ -56,10 +56,12 @@ listOfTags = c(paste0(emo::ji("heart"), "Favorite"),
 
 
 cardAppResources = card(
+  full_screen = TRUE,
+  height = "500px",
   card_header(class = "bg-dark", 
               strong("Find Internships")), 
   card_body(
-    markdown("
+    markdown('
       Some good places to find and apply for internships: 
       * [LinkedIn](https://www.linkedin.com/)
       * [Handshake](https://joinhandshake.com/)
@@ -69,6 +71,7 @@ cardAppResources = card(
       * [RemoteOk](https://remoteok.com/): remote positions
       * [BuiltIn](https://builtin.com/jobs): tech positions in tech hubs
       * [Summer 2024 Tech Internships Repo](https://github.com/pittcsc/Summer2023-Internships/blob/dev/README-2024.md)
+      * [My shortlist of companies to "deep dive" into for Summer 2024](https://docs.google.com/document/d/1OssElZZ87VWzG-nr1WfQ_VYSueYff7awq4N8UAbryMw/edit?usp=sharing)
       
       Other sites: 
       * [Simplify](https://simplify.jobs/l/Best-Remote-Internships): a collection of remote-friendly internship opportunities currently hiring for roles ranging across tech, finance, marketing, HR, and more
@@ -78,12 +81,14 @@ cardAppResources = card(
       * [A nice spreadsheet of job links](https://docs.google.com/spreadsheets/d/1O2om9Zqdvtj76ChYetzOlcBjDHqAdZnybTJ7g0HkB5k/edit#gid=838463087)
       * [Spreadsheet of top underclassmen internships](https://docs.google.com/spreadsheets/d/1TSgC8ET1WT8Y9nh7UdJXlsMHChQwkgJdZESxAOQ20vQ/edit#gid=0)
       * [Canadian Tech Internships Repo](https://github.com/jenndryden/Canadian-Tech-Internships-Summer-2023)
-             "
+             '
     )
   )
 )
 
 cardMiscResources = card(
+  full_screen = TRUE,
+  height = "500px",
   card_header(class = "bg-dark", 
               strong("Other Resources")), 
   card_body(
@@ -97,14 +102,21 @@ cardMiscResources = card(
              * [A Guide to Technical Interviews](https://www.techinterviewhandbook.org/)
              * [64 of the toughest interview questions](https://cdn.discordapp.com/attachments/1032934764849668128/1046628188584939620/64-Toughest-Interview-Questions.pdf)
              * [Coding Interview University](https://github.com/jwasham/coding-interview-university)
+             * [Leetcode](https://leetcode.com/)
+             * [Towards Data Science](https://towardsdatascience.com/): blogs/articles/demos about data science, by independent authors
+             
+             Resources for personal projects: 
              * [Build-Your-Own-X](https://github.com/codecrafters-io/build-your-own-x): step-by-step guides on how to recreate your favorite technologies from scratch
              * [Client and Server-Side Web Dev.](https://drstearns.github.io/tutorials/): comprehensive list of tutorials (HTML, CSS, JS)
-             * [Leetcode](https://leetcode.com/)
+             * [Neumorphism.io](https://neumorphism.io): generate soft UI CSS code
+             * [Client-side Web Dev.](https://gamma.app/docs/INFO-340-Client-Side-Web-Development-51flvjf2j81airo?fbclid=PAAaaYqGGY7NCzF6cm5GrTY_W1yjDXteTONqgFnC4Y9stDjrSxqqkOa99WugY&mode=doc): a great resource for client-side development (HTML, CSS, JS, React, Node.js, etc.)
              ")
   )
 )
 
 cardTips = card(
+  full_screen = TRUE,
+  height = "500px",
   card_header(class = "bg-dark", 
               strong("General Tips")), 
   card_body(
@@ -124,6 +136,8 @@ cardTips = card(
 )
 
 cardFilter = card(
+  full_screen = TRUE,
+  height = "500px",
   card_header(class = "bg-dark", 
               strong("Statistics by Application Cycle")), 
   card_body(
@@ -159,9 +173,9 @@ ui = page_navbar(title = strong("Internship Database"),
                  includeCSS("www/styles.css"),
                  br(),
                  
-                 nav(title = strong("Create Entries"),
-                   layout_sidebar(sidebar(width = "330",
-                                          div(id = "form",
+                 nav_panel(title = strong("Create Entries"),
+                   layout_sidebar(sidebar = sidebar(width = 330,
+                                                    id = "form",
                                               dateInput("appliedDate",
                                                         label = "Date applied",
                                                         value = today(),
@@ -190,7 +204,7 @@ ui = page_navbar(title = strong("Internship Database"),
                                                              placeholder = "Any other important things to know about this role",
                                                              resize = "vertical"),
                                               actionButton("submitButton",
-                                                            label = "Submit"))
+                                                            label = "Submit")
                ),
                column(12,
                  actionButton("info", 
@@ -201,19 +215,19 @@ ui = page_navbar(title = strong("Internship Database"),
                               label = " Tips"),
                  align = "right"
                ),
-               br(),
                h3(strong("Your Internships")),
                br(),
                downloadButton("downloadButton",
-                              label = "Download Table"),
-               br(), br(),
-               dataTableOutput("responsesTable"),
+                              label = "Download Table", 
+                              style = "width: 200px"),
+               br(), 
+               fluidRow(DT::dataTableOutput("responsesTable")),
                br())), 
-               nav(title = strong("Track Offers/Rejections"), 
+               nav_panel(title = strong("Track Offers/Rejections"), 
                    layout_sidebar(
-                     sidebar(
+                     sidebar = sidebar(
                        width = 330, 
-                       div(id = "updateForm",
+                       id = "updateForm",
                          textInput("ID", 
                                    label = "ID", 
                                    placeholder = "21"),
@@ -228,18 +242,19 @@ ui = page_navbar(title = strong("Internship Database"),
                                        resize = "vertical", 
                                        placeholder = "Final comments about this position"), 
                          actionButton("submitUpdate", 
-                                      label = "Submit"))
+                                      label = "Submit")
                      ), 
                      h3(strong("Your Internship Statuses")),
                      br(), 
                      downloadButton("downloadResults", 
-                                    label = "Download Table"), 
-                     br(), br(),
-                     dataTableOutput("updatesTable")
+                                    label = "Download Table", 
+                                    style = "width: 200px"), 
+                     br(), 
+                     DT::dataTableOutput("updatesTable")
                    )), 
-               nav(title = strong("Filter Entries"), 
+               nav_panel(title = strong("Filter Entries"), 
                    layout_sidebar(
-                     sidebar(# position = "right", 
+                     sidebar = sidebar(# position = "right", 
                        width = "330",
                        # open = TRUE, 
                        p(strong("Please check your query BEFORE submitting, especially when altering or updating!")),
@@ -280,14 +295,14 @@ ui = page_navbar(title = strong("Internship Database"),
                        br(), 
                        downloadButton("downloadQuery", 
                                       label = "Download Table",
-                                      style = "width: 160px"),
+                                      style = "width: 200px"),
                        br(), br(),
-                       dataTableOutput("queryTable")
+                       DT::dataTableOutput("queryTable")
                      )
                      # border = FALSE
                    )
                ), 
-               nav(title = strong("Resources"), 
+               nav_panel(title = strong("Resources"), 
                    fluidRow(
                      column(2),
                      column(4,
@@ -297,21 +312,22 @@ ui = page_navbar(title = strong("Internship Database"),
                                p(textOutput("responsesComm")),
                                # full_screen = T, 
                                theme_color = "light", 
-                               height = "170px")), 
+                               height = "230px")), 
                      column(4, 
                             value_box(title = strong("Acceptance Rate"),
                                       value = h4(strong(textOutput("acceptanceRate"))),
                                       showcase = plotlyOutput("statusDonut"), 
                                       p(textOutput("statusComm")), 
                                       theme_color = "light", 
-                                      height = "170px")), 
+                                      height = "230px")), 
                      column(2)),
-                   br(), 
+                   fluidRow(
                    layout_column_wrap(
                      width = 1/2, 
-                     height = 1100, 
+                     height = 1200, 
                      cardAppResources, cardFilter, cardMiscResources, cardTips
-                   ) 
+                   )), 
+                   br()
                    )
 )
 
@@ -360,13 +376,15 @@ server = function(input, output) {
                    "Tags" = "tags",  
                    "Notes" = "addlNotes", 
                    "Cycle" = "cycle"),
-      options = list(scrollX = TRUE, 
+      options = list(scrollX = TRUE,
+                     # scrollY = "250px",
                      pageLength = 5,
                      search.regex = TRUE,
                      columnDefs = (list(list(width = '110px', targets = c("appliedDate", "cycle")), 
                                         list(width = "150px", targets = c("positionTitle", "companyName")), 
                                         list(width = "230px", targets = c("tags")),
-                                        list(width = "325px", targets = c("roleDescription", "addlNotes")))))
+                                        list(width = "325px", targets = c("roleDescription", "addlNotes"))))
+      )
     )
   })
   
@@ -397,7 +415,7 @@ server = function(input, output) {
     data
   })
   
-  output$queryTable = renderDataTable({
+  output$queryTable = DT::renderDataTable({
     if (grepl("SELECT * FROM POSITIONS", str_to_upper(input$query), fixed = T)) {
       columnDefs = (list(list(width = '110px', targets = c("appliedDate", "cycle")), 
                          list(width = "150px", targets = c("positionTitle", "companyName")), 
@@ -473,7 +491,7 @@ server = function(input, output) {
     data
   })
   
-  output$updatesTable = renderDataTable({
+  output$updatesTable = DT::renderDataTable({
     DT::datatable(
       results_data(), 
       rownames = FALSE,
@@ -565,9 +583,10 @@ server = function(input, output) {
       plot_ly(labels = ~Status, values = ~Count, 
               showlegend = F, 
               marker = list(colors = palette), 
-              text = ~paste0(round(Count / sum(Count) * 100, 2), "%"),
+              # text = ~paste0(round(Count / sum(Count) * 100, 2), "%"),
+              text = ~paste(Count, "applications"),
               textinfo = txtInfo,
-              hoverinfo = "label+text") %>%
+              hoverinfo = "label+percent+text") %>%
       add_pie(hole = 0.2) %>%
       layout(
         hovermode = "x",
@@ -576,7 +595,7 @@ server = function(input, output) {
         paper_bgcolor = "transparent",
         plot_bgcolor = "transparent"
       ) %>%
-      config(displayModeBar = F)
+      plotly::config(displayModeBar = F)
   }
   output$responsesDonut = renderPlotly({
     palette = c("#B7A5E9", "#E7A08E")
@@ -640,7 +659,7 @@ server = function(input, output) {
       Count = c(nrow(cycleResultsData()), 
                 nrow(cycleResponsesData()) - nrow(cycleResultsData()))
     )
-    donut = plotDonut(cyclePData, palette, "text")
+    donut = plotDonut(cyclePData, palette, "percent")
   })
   
   output$cycleAcceptance = renderPlotly({
@@ -653,7 +672,7 @@ server = function(input, output) {
       Status = c("Accepted", "Rejected"), 
       Count = c(accepted, solidStatus - accepted)
     )
-    donut = plotDonut(cycleRData, palette, "text")
+    donut = plotDonut(cycleRData, palette, "percent")
   })
   
   output$cycleResponsesComm = renderUI({
