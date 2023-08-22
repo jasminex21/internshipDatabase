@@ -70,7 +70,7 @@ cardAppResources = card(
       * [Wellfound](https://wellfound.com/jobs): startup-focused
       * [RemoteOk](https://remoteok.com/): remote positions
       * [BuiltIn](https://builtin.com/jobs): tech positions in tech hubs
-      * [Summer 2024 Tech Internships Repo](https://github.com/pittcsc/Summer2023-Internships/blob/dev/README-2024.md)
+      * [Summer 2024 Tech Internships Repo](https://github.com/SimplifyJobs/Summer2024-Internships/tree/dev)
       * [My shortlist of companies to "deep dive" into for Summer 2024](https://docs.google.com/document/d/1OssElZZ87VWzG-nr1WfQ_VYSueYff7awq4N8UAbryMw/edit?usp=sharing)
       
       Other sites: 
@@ -144,7 +144,7 @@ cardFilter = card(
     selectInput("selectCycle", 
                 label = "Application cycle", 
                 choices = choicesCycle, 
-                selected = 1), 
+                selected = choicesCycle[3]), 
     br(),
     layout_column_wrap(
       width = 1/2,
@@ -184,7 +184,7 @@ ui = page_navbar(title = strong("Internship Database"),
                                               selectInput("cycle", 
                                                           label = "Application Cycle", 
                                                           choices = choicesCycle, 
-                                                          selected = 1),
+                                                          selected = choicesCycle[3]),
                                               textInput("positionTitle",
                                                          label = "Position",
                                                          placeholder = "Data Science Intern"),
@@ -216,7 +216,6 @@ ui = page_navbar(title = strong("Internship Database"),
                  align = "right"
                ),
                h3(strong("Your Internships")),
-               br(),
                downloadButton("downloadButton",
                               label = "Download Table", 
                               style = "width: 200px"),
@@ -245,7 +244,6 @@ ui = page_navbar(title = strong("Internship Database"),
                                       label = "Submit")
                      ), 
                      h3(strong("Your Internship Statuses")),
-                     br(), 
                      downloadButton("downloadResults", 
                                     label = "Download Table", 
                                     style = "width: 200px"), 
@@ -292,7 +290,6 @@ ui = page_navbar(title = strong("Internship Database"),
                      conditionalPanel(
                        condition = "input.submitQuery > 0",
                        h3(strong("Filtered Table")),
-                       br(), 
                        downloadButton("downloadQuery", 
                                       label = "Download Table",
                                       style = "width: 200px"),
