@@ -27,4 +27,4 @@ There are four tabs:
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/1846161f-193e-4c40-8882-fda37b1dcb2d)
 
 ### Further steps:
-- It'd be nice to be able to clean up the "Your Entries" table such that it can be filtered by whether a response has been recieved. Right now it's just a big conglomeration of applications and it's hard to tell what exactly I'm looking at. 
+- It would be helpful if I had a tab called something like "To Check Out" where it'd be a datatable with links to applications that I haven't yet added to the database but I'd like to check them out. And once I do check them out, I can check it off or something and it'd disappear from the table. This is definitely doable, I am just too lazy at the moment. 
