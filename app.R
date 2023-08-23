@@ -174,7 +174,7 @@ ui = page_navbar(title = strong("Internship Database"),
                  br(),
                  
                  nav_panel(title = strong("Create Entries"),
-                   layout_sidebar(sidebar = sidebar(width = 330,
+                   layout_sidebar(sidebar = sidebar(width = 410,
                                                     id = "form",
                                               dateInput("appliedDate",
                                                         label = "Date applied",
@@ -219,13 +219,16 @@ ui = page_navbar(title = strong("Internship Database"),
                downloadButton("downloadButton",
                               label = "Download Table", 
                               style = "width: 200px"),
-               br(), 
+               selectInput("filter_cycle", 
+                           label = "Select application cycle", 
+                           choices = c("All cycles", choicesCycle), 
+                           selected = choicesCycle[3]),
                fluidRow(DT::dataTableOutput("responsesTable")),
                br())), 
                nav_panel(title = strong("Track Offers/Rejections"), 
                    layout_sidebar(
                      sidebar = sidebar(
-                       width = 330, 
+                       width = 450, 
                        id = "updateForm",
                          textInput("ID", 
                                    label = "ID", 
@@ -247,13 +250,12 @@ ui = page_navbar(title = strong("Internship Database"),
                      downloadButton("downloadResults", 
                                     label = "Download Table", 
                                     style = "width: 200px"), 
-                     br(), 
                      DT::dataTableOutput("updatesTable")
                    )), 
                nav_panel(title = strong("Filter Entries"), 
                    layout_sidebar(
                      sidebar = sidebar(# position = "right", 
-                       width = "330",
+                       width = 450,
                        # open = TRUE, 
                        p(strong("Please check your query BEFORE submitting, especially when altering or updating!")),
                        # hr(),
@@ -293,7 +295,7 @@ ui = page_navbar(title = strong("Internship Database"),
                        downloadButton("downloadQuery", 
                                       label = "Download Table",
                                       style = "width: 200px"),
-                       br(), br(),
+                       br(),
                        DT::dataTableOutput("queryTable")
                      )
                      # border = FALSE
@@ -361,8 +363,14 @@ server = function(input, output) {
   
   # displaying the responses in a table
   output$responsesTable <- DT::renderDataTable({
+    apps = responses_data()
+    
+    if (input$filter_cycle != "All cycles") {
+      apps = apps %>% filter(cycle == input$filter_cycle)
+    }
+    
     DT::datatable(
-      responses_data(),
+      apps,
       rownames = FALSE,
       escape = F,
       selection = "none",
