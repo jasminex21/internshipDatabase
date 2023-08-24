@@ -30,7 +30,8 @@ updatesReqFields = c("ID",
 updatesAllFields = c(updatesReqFields, 
                      "notes")
 checkFields = c("positionName", 
-                "linkToPosition")
+                "linkToPosition", 
+                "positionComments")
 
 addResponses <- function(data, table) {
   db <- dbConnect(SQLite(), databaseName)
@@ -314,6 +315,10 @@ ui = page_navbar(title = strong("Internship Database"),
                                textInput("linkToPosition", 
                                          label = "Link to position", 
                                          placeholder = "The link to the application and/or role description"), 
+                               textAreaInput("positionComments", 
+                                             label = "Any additional comments about this position", 
+                                             resize = "vertical", 
+                                             placeholder = "e.g., The application for this position opens in November"),
                                actionButton("check_submit", 
                                             "Submit"), 
                                hr(),
@@ -322,6 +327,7 @@ ui = page_navbar(title = strong("Internship Database"),
                              h3(strong("Internships to Check Out")),
                              fluidRow(DT::dataTableOutput("linksTable"))
                            )),
+                 
                  nav_panel(title = strong("Resources"), 
                            fluidRow(
                              column(2),
@@ -780,7 +786,8 @@ server = function(input, output) {
       colnames = c("ID" = 1, 
                    "Position Title" = 2, 
                    "Link to Position" = 3, 
-                   "Checked Out" = 4),
+                   "Additional Comments" = 4, 
+                   "Checked Out" = 5),
       escape = FALSE,
       options = list(
         scrollX = TRUE,
@@ -788,10 +795,11 @@ server = function(input, output) {
         search.regex = TRUE,
         rowCallback = JS('
           function(row, data, index){
-            $(row).find("td:eq(3)").html("<input type=\'checkbox\'>");
+            $(row).find("td:eq(4)").html("<input type=\'checkbox\'>");
           }'), 
         columnDefs = list(list(width = "350px", targets = c("positionName", 
-                                                             "linkToPosition")))
+                                                             "linkToPosition")), 
+                          list(width = "400px", targets = c("positionComments")))
     ))
   })
 }
