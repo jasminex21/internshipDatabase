@@ -18,13 +18,17 @@ There are four tabs:
 
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/55e53de5-ba6e-4fb8-9067-60663a888e1e)
 
-- **Filter Entries**: use SQLite commands to filter or alter tables
+- **Filter Entries**: use SQL commands to filter or alter tables
 
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/6f0c494c-157b-49de-90eb-e04bd14b655f)
+
+- **To Check Out**: record and track internships that you plan to apply to
+
+![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/95b75632-6890-44c9-a83d-76783d6f9135)
 
 - **Resources**: statistics and resources to guide you during the application cycle
 
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/1846161f-193e-4c40-8882-fda37b1dcb2d)
 
 ### Further steps:
-- It would be helpful if I had a tab called something like "To Check Out" where it'd be a datatable with links to applications that I haven't yet added to the database but I'd like to check them out. And once I do check them out, I can check it off or something and it'd disappear from the table. This is definitely doable, I am just too lazy at the moment. 
+TBD
