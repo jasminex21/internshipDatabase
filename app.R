@@ -15,6 +15,7 @@ library(shinycssloaders)
 databaseName = "Applications"
 tableName = "Positions"
 otherTable = "Updates"
+linksTable = "Links"
 finalTable = "Results"
 requiredFields = c("positionTitle", 
                    "companyName")
@@ -28,6 +29,8 @@ updatesReqFields = c("ID",
                      "status")
 updatesAllFields = c(updatesReqFields, 
                      "notes")
+checkFields = c("positionName", 
+                "linkToPosition")
 
 addResponses <- function(data, table) {
   db <- dbConnect(SQLite(), databaseName)
@@ -38,9 +41,9 @@ addResponses <- function(data, table) {
   dbDisconnect(db)
 }
 
-loadResponses <- function() {
+loadResponses <- function(data, table) {
   db <- dbConnect(SQLite(), databaseName)
-  query <- sprintf("SELECT * FROM %s", tableName)
+  query <- sprintf("SELECT * FROM %s", table)
   data <- dbGetQuery(db, query)
   dbDisconnect(db)
   data
@@ -171,163 +174,181 @@ ui = page_navbar(title = strong("Internship Database"),
                  id = "nav",
                  shinyjs::useShinyjs(),
                  includeCSS("www/styles.css"),
-                 br(),
                  
                  nav_panel(title = strong("Create Entries"),
-                   layout_sidebar(sidebar = sidebar(width = 410,
-                                                    id = "form",
-                                              dateInput("appliedDate",
-                                                        label = "Date applied",
-                                                        value = today(),
-                                                        max = today(),
-                                                        format = "mm-dd-yyyy"),
-                                              selectInput("cycle", 
-                                                          label = "Application Cycle", 
-                                                          choices = choicesCycle, 
-                                                          selected = choicesCycle[3]),
-                                              textInput("positionTitle",
-                                                         label = "Position",
-                                                         placeholder = "Data Science Intern"),
-                                              textInput("companyName",
-                                                         label = "Company",
-                                                         placeholder = "Chevron"),
-                                              textAreaInput("roleDescription",
-                                                             label = "Role description",
-                                                             placeholder = "Your responsibilities include...",
-                                                             resize = "vertical"),
-                                              checkboxGroupInput("tags",
-                                                                  label = "Tags",
-                                                                  choiceNames = listOfTags,
-                                                                  choiceValues = listOfTags),
-                                              textAreaInput("addlNotes",
-                                                             label = "Additional notes",
-                                                             placeholder = "Any other important things to know about this role",
-                                                             resize = "vertical"),
-                                              actionButton("submitButton",
-                                                            label = "Submit")
-               ),
-               column(12,
-                 actionButton("info", 
-                              icon = icon("circle-info"), 
-                              label = " Navigation"), 
-                 actionButton("tips", 
-                              icon = icon("lightbulb"),
-                              label = " Tips"),
-                 align = "right"
-               ),
-               h3(strong("Your Internships")),
-               downloadButton("downloadButton",
-                              label = "Download Table", 
-                              style = "width: 200px"),
-               selectInput("filter_cycle", 
-                           label = "Select application cycle", 
-                           choices = c("All cycles", choicesCycle), 
-                           selected = choicesCycle[3]),
-               fluidRow(DT::dataTableOutput("responsesTable")),
-               br())), 
-               nav_panel(title = strong("Track Offers/Rejections"), 
-                   layout_sidebar(
-                     sidebar = sidebar(
-                       width = 450, 
-                       id = "updateForm",
-                         textInput("ID", 
-                                   label = "ID", 
-                                   placeholder = "21"),
-                         radioButtons("status",
-                                      label = "Status", 
-                                      choices = c("Accepted" = "Accepted", 
-                                                  "Rejected" = "Rejected", 
-                                                  "Interview" = "Interview"), 
-                                      selected = "Rejected"), 
-                         textAreaInput("notes", 
-                                       label = "Additional notes", 
-                                       resize = "vertical", 
-                                       placeholder = "Final comments about this position"), 
-                         actionButton("submitUpdate", 
-                                      label = "Submit")
-                     ), 
-                     h3(strong("Your Internship Statuses")),
-                     downloadButton("downloadResults", 
-                                    label = "Download Table", 
-                                    style = "width: 200px"), 
-                     DT::dataTableOutput("updatesTable")
-                   )), 
-               nav_panel(title = strong("Filter Entries"), 
-                   layout_sidebar(
-                     sidebar = sidebar(# position = "right", 
-                       width = 450,
-                       # open = TRUE, 
-                       p(strong("Please check your query BEFORE submitting, especially when altering or updating!")),
-                       # hr(),
-                       textAreaInput("query", 
-                                     label = "Your query", 
-                                     resize = "vertical", 
-                                     placeholder = "SELECT * FROM Positions"), 
-                       actionButton("submitQuery", 
-                                    label = "Submit"), 
-                       hr(),
-                       strong(helpText("Database information")),
-                       helpText(
-                         tags$ul(
-                           tags$li(paste0("Positions: ", paste0(c("ID", allFields), collapse = ", "))), 
-                           tags$li(paste0("Updates: ID, status, notes")), 
-                           tags$li(paste0("Results: ID, positionTitle, companyName, tags, status, notes, cycle"))
-                         )
-                       ),
-                       # hr(), 
-                       # actionButton("clearFilters", 
-                       #              label = "Clear filters"),
-                     ),
-                     column(12,
-                            actionButton("sqlTips", 
-                                         icon = icon("lightbulb"), 
-                                         label = " SQL Tips"),
-                            align = "right"
-                     ),
-                     conditionalPanel(
-                       condition = "input.submitQuery == 0", 
-                       br(), 
-                       p(strong(HTML("<center>No filters applied</center>")))
-                     ),
-                     conditionalPanel(
-                       condition = "input.submitQuery > 0",
-                       h3(strong("Filtered Table")),
-                       downloadButton("downloadQuery", 
-                                      label = "Download Table",
-                                      style = "width: 200px"),
-                       br(),
-                       DT::dataTableOutput("queryTable")
-                     )
-                     # border = FALSE
-                   )
-               ), 
-               nav_panel(title = strong("Resources"), 
-                   fluidRow(
-                     column(2),
-                     column(4,
-                      value_box(title = strong("Response Rate"), 
-                               value = h4(strong(textOutput("responsesPercent"))), 
-                               showcase = plotlyOutput("responsesDonut"), 
-                               p(textOutput("responsesComm")),
-                               # full_screen = T, 
-                               theme_color = "light", 
-                               height = "230px")), 
-                     column(4, 
-                            value_box(title = strong("Acceptance Rate"),
-                                      value = h4(strong(textOutput("acceptanceRate"))),
-                                      showcase = plotlyOutput("statusDonut"), 
-                                      p(textOutput("statusComm")), 
-                                      theme_color = "light", 
-                                      height = "230px")), 
-                     column(2)),
-                   fluidRow(
-                   layout_column_wrap(
-                     width = 1/2, 
-                     height = 1200, 
-                     cardAppResources, cardFilter, cardMiscResources, cardTips
-                   )), 
-                   br()
-                   )
+                           layout_sidebar(sidebar = sidebar(width = 410,
+                                                            id = "form",
+                                                            dateInput("appliedDate",
+                                                                      label = "Date applied",
+                                                                      value = today(),
+                                                                      max = today(),
+                                                                      format = "mm-dd-yyyy"),
+                                                            selectInput("cycle", 
+                                                                        label = "Application Cycle", 
+                                                                        choices = choicesCycle, 
+                                                                        selected = choicesCycle[3]),
+                                                            textInput("positionTitle",
+                                                                      label = "Position",
+                                                                      placeholder = "Data Science Intern"),
+                                                            textInput("companyName",
+                                                                      label = "Company",
+                                                                      placeholder = "Chevron"),
+                                                            textAreaInput("roleDescription",
+                                                                          label = "Role description",
+                                                                          placeholder = "Your responsibilities include...",
+                                                                          resize = "vertical"),
+                                                            checkboxGroupInput("tags",
+                                                                               label = "Tags",
+                                                                               choiceNames = listOfTags,
+                                                                               choiceValues = listOfTags),
+                                                            textAreaInput("addlNotes",
+                                                                          label = "Additional notes",
+                                                                          placeholder = "Any other important things to know about this role",
+                                                                          resize = "vertical"),
+                                                            actionButton("submitButton",
+                                                                         label = "Submit")
+                           ),
+                           column(12,
+                                  actionButton("info", 
+                                               icon = icon("circle-info"), 
+                                               label = " Navigation"), 
+                                  actionButton("tips", 
+                                               icon = icon("lightbulb"),
+                                               label = " Tips"),
+                                  align = "right"
+                           ),
+                           h3(strong("Your Internships")),
+                           downloadButton("downloadButton",
+                                          label = "Download Table", 
+                                          style = "width: 200px"),
+                           selectInput("filter_cycle", 
+                                       label = "Select application cycle", 
+                                       choices = c("All cycles", choicesCycle), 
+                                       selected = choicesCycle[3]),
+                           fluidRow(DT::dataTableOutput("responsesTable")),
+                           br())), 
+                 nav_panel(title = strong("Track Offers/Rejections"), 
+                           layout_sidebar(
+                             sidebar = sidebar(
+                               width = 450, 
+                               id = "updateForm",
+                               textInput("ID", 
+                                         label = "ID", 
+                                         placeholder = "21"),
+                               radioButtons("status",
+                                            label = "Status", 
+                                            choices = c("Accepted" = "Accepted", 
+                                                        "Rejected" = "Rejected", 
+                                                        "Interview" = "Interview"), 
+                                            selected = "Rejected"), 
+                               textAreaInput("notes", 
+                                             label = "Additional notes", 
+                                             resize = "vertical", 
+                                             placeholder = "Final comments about this position"), 
+                               actionButton("submitUpdate", 
+                                            label = "Submit")
+                             ), 
+                             h3(strong("Your Internship Statuses")),
+                             downloadButton("downloadResults", 
+                                            label = "Download Table", 
+                                            style = "width: 200px"), 
+                             DT::dataTableOutput("updatesTable")
+                           )), 
+                 nav_panel(title = strong("Filter Entries"), 
+                           layout_sidebar(
+                             sidebar = sidebar(# position = "right", 
+                               width = 450,
+                               # open = TRUE, 
+                               p(strong("Please check your query BEFORE submitting, especially when altering or updating!")),
+                               # hr(),
+                               textAreaInput("query", 
+                                             label = "Your query", 
+                                             resize = "vertical", 
+                                             placeholder = "SELECT * FROM Positions"), 
+                               actionButton("submitQuery", 
+                                            label = "Submit"), 
+                               hr(),
+                               strong(helpText("Database information")),
+                               helpText(
+                                 tags$ul(
+                                   tags$li(paste0("Positions: ", paste0(c("ID", allFields), collapse = ", "))), 
+                                   tags$li(paste0("Updates: ID, status, notes")), 
+                                   tags$li(paste0("Results: ID, positionTitle, companyName, tags, status, notes, cycle"))
+                                 )
+                               ),
+                               # hr(), 
+                               # actionButton("clearFilters", 
+                               #              label = "Clear filters"),
+                             ),
+                             column(12,
+                                    actionButton("sqlTips", 
+                                                 icon = icon("lightbulb"), 
+                                                 label = " SQL Tips"),
+                                    align = "right"
+                             ),
+                             conditionalPanel(
+                               condition = "input.submitQuery == 0", 
+                               br(), 
+                               p(strong(HTML("<center>No filters applied</center>")))
+                             ),
+                             conditionalPanel(
+                               condition = "input.submitQuery > 0",
+                               h3(strong("Filtered Table")),
+                               downloadButton("downloadQuery", 
+                                              label = "Download Table",
+                                              style = "width: 200px"),
+                               br(),
+                               DT::dataTableOutput("queryTable")
+                             )
+                             # border = FALSE
+                           )
+                 ), 
+                 nav_panel(title = strong("To Check Out"), 
+                           layout_sidebar(
+                             sidebar = sidebar(
+                               width = 450, 
+                               id = "linksForm",
+                               textInput("positionName", 
+                                         label = "Position title", 
+                                         placeholder = "Data Science Intern"), 
+                               textInput("linkToPosition", 
+                                         label = "Link to position", 
+                                         placeholder = "The link to the application and/or role description"), 
+                               actionButton("check_submit", 
+                                            "Submit"), 
+                               hr(),
+                               p(helpText("Refresh this tab after you have confirmed entries to delete"))
+                             ), 
+                             h3(strong("Internships to Check Out")),
+                             fluidRow(DT::dataTableOutput("linksTable"))
+                           )),
+                 nav_panel(title = strong("Resources"), 
+                           fluidRow(
+                             column(2),
+                             column(4,
+                                    value_box(title = strong("Response Rate"), 
+                                              value = h4(strong(textOutput("responsesPercent"))), 
+                                              showcase = plotlyOutput("responsesDonut"), 
+                                              p(textOutput("responsesComm")),
+                                              # full_screen = T, 
+                                              theme_color = "light", 
+                                              height = "230px")), 
+                             column(4, 
+                                    value_box(title = strong("Acceptance Rate"),
+                                              value = h4(strong(textOutput("acceptanceRate"))),
+                                              showcase = plotlyOutput("statusDonut"), 
+                                              p(textOutput("statusComm")), 
+                                              theme_color = "light", 
+                                              height = "230px")), 
+                             column(2)),
+                           fluidRow(
+                             layout_column_wrap(
+                               width = 1/2, 
+                               height = 1200, 
+                               cardAppResources, cardFilter, cardMiscResources, cardTips
+                             )), 
+                           br()
+                 )
 )
 
 server = function(input, output) {
@@ -343,7 +364,7 @@ server = function(input, output) {
   
   # gathering all input data (used as parameter for addResponses)
   inputData = reactive({
-   data = sapply(allFields, function(x) as.character(HTML(paste0(input[[x]], collapse = "<br/>"))))
+    data = sapply(allFields, function(x) as.character(HTML(paste0(input[[x]], collapse = "<br/>"))))
   })
   
   observeEvent(input$submitButton, {
@@ -358,7 +379,7 @@ server = function(input, output) {
   # updating the responses whenever a new submission is made 
   responses_data <- reactive({
     input$submitButton
-    loadResponses()
+    loadResponses(inputData(), tableName)
   })
   
   # displaying the responses in a table
@@ -443,7 +464,7 @@ server = function(input, output) {
                      pageLength = 5,
                      search.regex = TRUE,
                      columnDefs = columnDefs
-                     )
+      )
     )
   })
   
@@ -458,7 +479,7 @@ server = function(input, output) {
   
   observe({
     validUpdate = !is.null(input$ID) && input$ID != ""
-
+    
     shinyjs::toggleState("submitUpdate", validUpdate)
   })
   
@@ -534,14 +555,14 @@ server = function(input, output) {
         title = "Info",
         text = tags$span(
           "Welcome to ", strong("Internship Database,"), "your home base for managing internship applications! All responses are hosted locally in a SQLite database." ,
-              br(), br(),
-              "About each tab:",
-              tags$ul(
-                tags$li(tags$u("Create Entries:"), "enter information about each internship you apply for"),
-                tags$li(tags$u("Track Offers/Rejections:"), "track the internships you've heard back from"),
-                tags$li(tags$u("Filter Entries:"), "use SQLite commands to filter or alter tables"), 
-                tags$li(tags$u("Resources:"), "statistics and general resources to guide you in the application cycle")
-              )
+          br(), br(),
+          "About each tab:",
+          tags$ul(
+            tags$li(tags$u("Create Entries:"), "enter information about each internship you apply for"),
+            tags$li(tags$u("Track Offers/Rejections:"), "track the internships you've heard back from"),
+            tags$li(tags$u("Filter Entries:"), "use SQLite commands to filter or alter tables"), 
+            tags$li(tags$u("Resources:"), "statistics and general resources to guide you in the application cycle")
+          )
         ),
         html = TRUE # you must include this new argument
       )
@@ -690,6 +711,88 @@ server = function(input, output) {
     accepted = nrow(cycleResultsData() %>%
                       filter(status == "Accepted"))
     HTML(paste0("Of the ", strong(solidStatus), " applications you've (completely) heard back from for the ", strong(input$selectCycle), " cycle, you've been accepted to ", strong(accepted), " and rejected to ", strong(solidStatus - accepted), " of them"))
+  })
+  ### CHECK ###
+  observe({
+    validUpdate = !is.null(input$linkToPosition) && input$linkToPosition != ""
+    
+    shinyjs::toggleState("check_submit", validUpdate)
+  })
+  
+  inputCheckData = reactive({
+    data = sapply(checkFields, function(x) as.character(HTML(paste0(input[[x]], collapse = "<br/>"))))
+  })
+  
+  observeEvent(input$check_submit, {
+    shinyjs::disable("check_submit")
+    addResponses(inputCheckData(), linksTable)
+    shinyjs::reset("linksForm")
+    on.exit({
+      shinyjs::enable("check_submit")
+    })
+  })
+  
+  linksData <- reactive({
+    input$check_submit
+    loadResponses(inputCheckData(), linksTable)
+    # db = dbConnect(SQLite(), databaseName)
+    # query = sprintf("SELECT * FROM %s", linksTable)
+    # data = dbGetQuery(db, query)
+    # data
+  })
+  
+  # When a checkbox is clicked
+  observeEvent(input$linksTable_rows_selected, {
+    selectedRows <- input$linksTable_rows_selected
+    selectedIDs = linksData()$id[selectedRows]
+    if (length(selectedRows) > 0) {
+      # Update the 'selected' column in the SQLite table for the selected rows
+      db <- dbConnect(SQLite(), databaseName)
+      dbExecute(db, paste0("UPDATE ", linksTable, " SET selected = TRUE WHERE id IN (", paste(selectedIDs, collapse = ","), ")"))
+      
+      # Close the connection before executing the delete operation
+      dbDisconnect(db)
+      
+      # Reconnect and execute the delete operation
+      db <- dbConnect(SQLite(), databaseName)
+      dbExecute(db, paste0("DELETE FROM ", linksTable, " WHERE id IN (", paste(selectedIDs, collapse = ","), ")"))
+      dbDisconnect(db)
+      # Refresh the DataTable to reflect the changes
+      # new_data <- linksData()  # Get updated data
+      # proxy <- dataTableProxy("linksTable")  # Replace "linksTable" with your table's ID
+      # replaceData(proxy, new_data)  # Refresh DataTable
+    }
+  })
+  
+  proxy <- DT::dataTableProxy('linksTable')
+  shiny::observe({
+    
+    DT::replaceData(proxy, linksData())
+    
+  })
+  
+  output$linksTable <- renderDataTable({
+    data = linksData()
+    DT::datatable(
+      data,
+      rownames = FALSE,
+      selection = "multiple",
+      colnames = c("ID" = 1, 
+                   "Position Title" = 2, 
+                   "Link to Position" = 3, 
+                   "Checked Out" = 4),
+      escape = FALSE,
+      options = list(
+        scrollX = TRUE,
+        pageLength = 10,
+        search.regex = TRUE,
+        rowCallback = JS('
+          function(row, data, index){
+            $(row).find("td:eq(3)").html("<input type=\'checkbox\'>");
+          }'), 
+        columnDefs = list(list(width = "350px", targets = c("positionName", 
+                                                             "linkToPosition")))
+    ))
   })
 }
 
