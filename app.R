@@ -718,8 +718,8 @@ server = function(input, output) {
                       filter(status == "Accepted"))
     HTML(paste0("Of the ", strong(solidStatus), " applications you've (completely) heard back from for the ", strong(input$selectCycle), " cycle, you've been accepted to ", strong(accepted), " and rejected to ", strong(solidStatus - accepted), " of them"))
   })
-  ### CHECK ###
-  observe({
+
+    observe({
     validUpdate = !is.null(input$linkToPosition) && input$linkToPosition != ""
     
     shinyjs::toggleState("check_submit", validUpdate)
@@ -741,10 +741,6 @@ server = function(input, output) {
   linksData <- reactive({
     input$check_submit
     loadResponses(inputCheckData(), linksTable)
-    # db = dbConnect(SQLite(), databaseName)
-    # query = sprintf("SELECT * FROM %s", linksTable)
-    # data = dbGetQuery(db, query)
-    # data
   })
   
   # When a checkbox is clicked
@@ -763,22 +759,17 @@ server = function(input, output) {
       db <- dbConnect(SQLite(), databaseName)
       dbExecute(db, paste0("DELETE FROM ", linksTable, " WHERE id IN (", paste(selectedIDs, collapse = ","), ")"))
       dbDisconnect(db)
-      # Refresh the DataTable to reflect the changes
-      # new_data <- linksData()  # Get updated data
-      # proxy <- dataTableProxy("linksTable")  # Replace "linksTable" with your table's ID
-      # replaceData(proxy, new_data)  # Refresh DataTable
     }
-  })
-  
-  proxy <- DT::dataTableProxy('linksTable')
-  shiny::observe({
-    
-    DT::replaceData(proxy, linksData())
-    
   })
   
   output$linksTable <- renderDataTable({
     data = linksData()
+    
+    # make links clickable
+    if (nrow(data) > 0) {
+      data$linkToPosition = paste0('<a href="', data$linkToPosition, '" target=_"blank">', data$linkToPosition, "</a>")
+    }
+    
     DT::datatable(
       data,
       rownames = FALSE,
@@ -797,8 +788,7 @@ server = function(input, output) {
           function(row, data, index){
             $(row).find("td:eq(4)").html("<input type=\'checkbox\'>");
           }'), 
-        columnDefs = list(list(width = "350px", targets = c("positionName", 
-                                                             "linkToPosition")), 
+        columnDefs = list(list(width = "350px", targets = c("positionName", "linkToPosition")), 
                           list(width = "400px", targets = c("positionComments")))
     ))
   })
