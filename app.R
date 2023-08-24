@@ -730,8 +730,8 @@ server = function(input, output) {
                       filter(status == "Accepted"))
     HTML(paste0("Of the ", strong(solidStatus), " applications you've (completely) heard back from for the ", strong(input$selectCycle), " cycle, you've been accepted to ", strong(accepted), " and rejected to ", strong(solidStatus - accepted), " of them"))
   })
-
-    observe({
+  
+  observe({
     validUpdate = !is.null(input$linkToPosition) && input$linkToPosition != ""
     
     shinyjs::toggleState("check_submit", validUpdate)
@@ -755,24 +755,42 @@ server = function(input, output) {
     loadResponses(inputCheckData(), linksTable)
   })
   
-  # When a checkbox is clicked
-  observeEvent(input$linksTable_rows_selected, {
-    selectedRows <- input$linksTable_rows_selected
-    selectedIDs = linksData()$id[selectedRows]
-    if (length(selectedRows) > 0) {
-      # Update the 'selected' column in the SQLite table for the selected rows
-      db <- dbConnect(SQLite(), databaseName)
-      dbExecute(db, paste0("UPDATE ", linksTable, " SET selected = TRUE WHERE id IN (", paste(selectedIDs, collapse = ","), ")"))
+  observeEvent(input$linksTable_cell_clicked, {
+    info = input$linksTable_cell_clicked
+    
+    # Check if a cell in the checkbox column (4th column) is clicked
+    if (!is.null(info$row) && info$col == 4) {
+      # Get the row ID for the clicked cell
+      row_id = linksData()$id[info$row]
       
-      # Close the connection before executing the delete operation
-      dbDisconnect(db)
-      
-      # Reconnect and execute the delete operation
+      # Delete the entry from the SQLite table using your delete query
       db <- dbConnect(SQLite(), databaseName)
-      dbExecute(db, paste0("DELETE FROM ", linksTable, " WHERE id IN (", paste(selectedIDs, collapse = ","), ")"))
-      dbDisconnect(db)
+      dbExecute(db, paste0("DELETE FROM ", linksTable, " WHERE id IN (", row_id, ")"))
+      dbDisconnect(db)  # Disconnect after deletion
+      
+      # Refresh data after deletion
+      linksData()  # Ensure that the data is updated
     }
   })
+  
+  # # When a checkbox is clicked
+  # observeEvent(input$linksTable_rows_selected, {
+  #   selectedRows <- input$linksTable_rows_selected
+  #   selectedIDs = linksData()$id[selectedRows]
+  #   if (length(selectedRows) > 0) {
+  #     # Update the 'selected' column in the SQLite table for the selected rows
+  #     db <- dbConnect(SQLite(), databaseName)
+  #     dbExecute(db, paste0("UPDATE ", linksTable, " SET selected = TRUE WHERE id IN (", paste(selectedIDs, collapse = ","), ")"))
+  #     
+  #     # Close the connection before executing the delete operation
+  #     dbDisconnect(db)
+  #     
+  #     # Reconnect and execute the delete operation
+  #     db <- dbConnect(SQLite(), databaseName)
+  #     dbExecute(db, paste0("DELETE FROM ", linksTable, " WHERE id IN (", paste(selectedIDs, collapse = ","), ")"))
+  #     dbDisconnect(db)
+  #   }
+  # })
   
   output$linksTable <- renderDataTable({
     data = linksData()
@@ -800,9 +818,11 @@ server = function(input, output) {
           function(row, data, index){
             $(row).find("td:eq(4)").html("<input type=\'checkbox\'>");
           }'), 
-        columnDefs = list(list(width = "350px", targets = c("positionName", "linkToPosition")), 
-                          list(width = "400px", targets = c("positionComments")))
-    ))
+        columnDefs = list(
+          list(width = "300px", targets = c(1, 2)),  # Adjust column indexes accordingly
+          list(width = "350px", targets = c(3))  # Adjust column index accordingly
+        )
+      ))
   })
 }
 
