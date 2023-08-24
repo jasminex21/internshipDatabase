@@ -253,6 +253,10 @@ ui = page_navbar(title = strong("Internship Database"),
                              downloadButton("downloadResults", 
                                             label = "Download Table", 
                                             style = "width: 200px"), 
+                             selectInput("filter_cycle_two", 
+                                         label = "Select application cycle", 
+                                         choices = c("All cycles", choicesCycle), 
+                                         selected = choicesCycle[3]),
                              DT::dataTableOutput("updatesTable")
                            )), 
                  nav_panel(title = strong("Filter Entries"), 
@@ -461,6 +465,7 @@ server = function(input, output) {
     else {
       columnDefs = NULL
     }
+    
     DT::datatable(
       query_data(),
       rownames = FALSE,
@@ -524,8 +529,15 @@ server = function(input, output) {
   })
   
   output$updatesTable = DT::renderDataTable({
+    
+    apps = results_data()
+    
+    if (input$filter_cycle_two != "All cycles") {
+      apps = apps %>% filter(cycle == input$filter_cycle_two)
+    }
+    
     DT::datatable(
-      results_data(), 
+      apps,
       rownames = FALSE,
       escape = F, 
       selection = "none",
