@@ -30,6 +30,7 @@ updatesReqFields = c("ID",
 updatesAllFields = c(updatesReqFields, 
                      "notes")
 checkFields = c("positionName", 
+                "organization",
                 "linkToPosition", 
                 "positionComments")
 
@@ -316,6 +317,9 @@ ui = page_navbar(title = strong("Internship Database"),
                                textInput("positionName", 
                                          label = "Position title", 
                                          placeholder = "Data Science Intern"), 
+                               textInput("organization", 
+                                         label = "Company", 
+                                         placeholder = "Google"),
                                textInput("linkToPosition", 
                                          label = "Link to position", 
                                          placeholder = "The link to the application and/or role description"), 
@@ -759,7 +763,7 @@ server = function(input, output) {
     info = input$linksTable_cell_clicked
     
     # Check if a cell in the checkbox column (4th column) is clicked
-    if (!is.null(info$row) && info$col == 4) {
+    if (!is.null(info$row) && info$col == 5) {
       # Get the row ID for the clicked cell
       row_id = linksData()$id[info$row]
       
@@ -769,61 +773,46 @@ server = function(input, output) {
       dbDisconnect(db)  # Disconnect after deletion
       
       # Refresh data after deletion
-      linksData()  # Ensure that the data is updated
+      # linksData()  # Ensure that the data is updated
     }
   })
-  
-  # # When a checkbox is clicked
-  # observeEvent(input$linksTable_rows_selected, {
-  #   selectedRows <- input$linksTable_rows_selected
-  #   selectedIDs = linksData()$id[selectedRows]
-  #   if (length(selectedRows) > 0) {
-  #     # Update the 'selected' column in the SQLite table for the selected rows
-  #     db <- dbConnect(SQLite(), databaseName)
-  #     dbExecute(db, paste0("UPDATE ", linksTable, " SET selected = TRUE WHERE id IN (", paste(selectedIDs, collapse = ","), ")"))
-  #     
-  #     # Close the connection before executing the delete operation
-  #     dbDisconnect(db)
-  #     
-  #     # Reconnect and execute the delete operation
-  #     db <- dbConnect(SQLite(), databaseName)
-  #     dbExecute(db, paste0("DELETE FROM ", linksTable, " WHERE id IN (", paste(selectedIDs, collapse = ","), ")"))
-  #     dbDisconnect(db)
-  #   }
-  # })
   
   output$linksTable <- renderDataTable({
     data = linksData()
     
-    # make links clickable
+      names(data) <- c("ID",
+                       "Position Title",
+                       "Company",
+                       "Link to Position",
+                       "Additional Comments")
+    
+    # Make links clickable
     if (nrow(data) > 0) {
-      data$linkToPosition = paste0('<a href="', data$linkToPosition, '" target=_"blank">', data$linkToPosition, "</a>")
+      data$`Link to Position` <- paste0('<a href="', data$`Link to Position`, '" target="_blank">Link</a>')
     }
+    
+    # Add a checkbox column to the data
+    data$`Checked Out` <- sprintf('<input type="checkbox" name="checkedOut" value="%s">', data$ID)
     
     DT::datatable(
       data,
       rownames = FALSE,
       selection = "multiple",
-      colnames = c("ID" = 1, 
-                   "Position Title" = 2, 
-                   "Link to Position" = 3, 
-                   "Additional Comments" = 4, 
-                   "Checked Out" = 5),
       escape = FALSE,
       options = list(
         scrollX = TRUE,
         pageLength = 10,
         search.regex = TRUE,
-        rowCallback = JS('
-          function(row, data, index){
-            $(row).find("td:eq(4)").html("<input type=\'checkbox\'>");
-          }'), 
         columnDefs = list(
-          list(width = "300px", targets = c(1, 2)),  # Adjust column indexes accordingly
-          list(width = "350px", targets = c(3))  # Adjust column index accordingly
-        )
-      ))
+          list(width = "320px", targets = c("Position Title")), 
+          list(width = "150px", targets = c("Link to Position")), 
+          list(width = "200px", targets = c("Company")), 
+          list(width = "110px", targets = c("Checked Out")), 
+          list(width = "380px", targets = c("Additional Comments")))
+      )
+    ) 
   })
+  
 }
 
 shinyApp(ui = ui, server = server)
