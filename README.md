@@ -10,7 +10,7 @@ Last semester I had a hard time managing my internship applications, and these t
 
 There are four tabs: 
 
-- **Create entries**: enter information about each internship you apply for
+- **Create entries**: enter information about each internship you've applied for
 
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/aeec879c-9981-4503-8660-5429cc1e8115)
 
@@ -18,17 +18,17 @@ There are four tabs:
 
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/55e53de5-ba6e-4fb8-9067-60663a888e1e)
 
-- **Filter Entries**: use SQL commands to filter or alter tables
+- **Filter Entries**: use SQL commands to filter or alter tables (in case you make a mistake when entering information about an application)
 
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/6f0c494c-157b-49de-90eb-e04bd14b655f)
 
-- **To Check Out**: record and track internships that you plan to apply to
+- **To Check Out**: record and track internships that you plan to apply to (entries can be removed once they have been addressed)
 
-![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/95b75632-6890-44c9-a83d-76783d6f9135)
+![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/deb40c6e-660d-45d1-9855-a942027cccde)
 
-- **Resources**: statistics and resources to guide you during the application cycle
+- **Resources**: statistics (that can be filtered by application cycle) and resources to guide you during the application cycle
 
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/1846161f-193e-4c40-8882-fda37b1dcb2d)
 
 ### Further steps:
-TBD
+- Hopefully there won't be many more major additions and alterations to the database, because I don't want it to become too complex (it makes its usage way more demotivating)
