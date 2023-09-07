@@ -12,7 +12,7 @@ There are four tabs:
 
 - **Create entries**: enter information about each internship you've applied for
 
-![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/101c6ff5-8914-4506-aff8-9dbd5d79bbe9)
+![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/0da88ce1-bcb2-4c23-8dab-ab53c0095c6b)
 
 - **Track Offers/Rejections**: track the internships you've heard back from
 
@@ -24,7 +24,7 @@ There are four tabs:
 
 - **To Check Out**: record and track internships that you plan to apply to (entries can be removed once they have been addressed)
 
-![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/deb40c6e-660d-45d1-9855-a942027cccde)
+![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/7169acde-5d76-40cc-9bd0-0b0ba4305d42)
 
 - **Resources**: statistics (that can be filtered by application cycle) and resources to guide you during the application cycle
 
