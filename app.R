@@ -57,7 +57,8 @@ listOfTags = c(paste0(emo::ji("heart"), "Favorite"),
                paste0(emo::ji("purple heart"), "Hopeful"), 
                paste0(emo::ji("cross mark"), "Long shot"), 
                paste0(emo::ji("question"), "Preferred qualifs. not met"), 
-               paste0(emo::ji("woman_technologist"), "Remote"))
+               paste0(emo::ji("woman_technologist"), "Remote"),
+               paste0(emo::ji("neutral_face"), "Indifferent"))
 
 
 cardAppResources = card(
