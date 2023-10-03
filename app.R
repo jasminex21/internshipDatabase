@@ -58,7 +58,8 @@ listOfTags = c(paste0(emo::ji("heart"), "Favorite"),
                paste0(emo::ji("cross mark"), "Long shot"), 
                paste0(emo::ji("question"), "Preferred qualifs. not met"), 
                paste0(emo::ji("woman_technologist"), "Remote"),
-               paste0(emo::ji("neutral_face"), "Indifferent"))
+               paste0(emo::ji("neutral_face"), "Indifferent"), 
+               paste0(emo::ji("superhero"), "Hybrid"))
 
 
 cardAppResources = card(
@@ -259,7 +260,7 @@ ui = page_navbar(title = strong("Internship Database"),
                                          label = "Select application cycle", 
                                          choices = c("All cycles", choicesCycle), 
                                          selected = choicesCycle[3]),
-                             DT::dataTableOutput("updatesTable")
+                             fluidRow(DT::dataTableOutput("updatesTable"))
                            )), 
                  nav_panel(title = strong("Filter Entries"), 
                            layout_sidebar(
@@ -601,7 +602,7 @@ server = function(input, output) {
           "Some formatting tips:", 
           br(), 
           tags$ul(
-            tags$li('Links: <a href="Your Link" target="_blank">Text to show</a>'), 
+            tags$li('Links: <a href="Your Link" target="_blank">Link to position</a>'), 
             tags$li("Line break: <br/>")
           )
         ), 
