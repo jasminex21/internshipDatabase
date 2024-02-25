@@ -14,7 +14,7 @@ There are four tabs:
 
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/0da88ce1-bcb2-4c23-8dab-ab53c0095c6b)
 
-- **Track Offers/Rejections**: track the internships you've heard back from
+- **Track Updates**: track the internships you've heard back from
 
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/55e53de5-ba6e-4fb8-9067-60663a888e1e)
 
@@ -30,5 +30,9 @@ There are four tabs:
 
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/1846161f-193e-4c40-8882-fda37b1dcb2d)
 
-### Further steps:
-- Hopefully there won't be many more major additions and alterations to the database, because I don't want it to become too complex (it makes its usage way more demotivating)
+### TODO:
+- Make everything less manual and more editable: 
+  - Combine the Create Entries and Track Updates tables - it'd be useful if you didn't have to manually add an ID in. I think it'd be cool to make it so that there is a dropdown where you can select, say, "rejected" or "first round interview"
+  - Make entries actually editable after they are confirmed, because at the moment I have to delete the entry and redo it if I want to make changes. If I want to add more notes for example, I want to actually be able to edit it directly.
+ - Figure out how to make Enter count as a line break. For now, I've had to use <br/> which is obviously not ideal.
+ - Ultimate aim is to be able to actually publish this as an app that more people can use. 
