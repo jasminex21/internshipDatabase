@@ -37,4 +37,5 @@ There are four tabs:
     - Consider doing this using the `rhandsontable` package - would require changing a good amount of things (https://jrowen.github.io/rhandsontable/#Shiny)
     - There is also an `editable = TRUE` parameter in `DT::datatable`; if this works it'd be great but so far I have not seen success. 
  - Figure out how to make Enter count as a line break. For now, I've had to use `<br/>` which is obviously not ideal.
- - Ultimate aim is to be able to actually publish this as an app that more people can use. 
+ - Ultimate aim is to be able to actually publish this as an app that more people can use. This would require user authentication for sure. I will also have to figure out how to create/initialize a new database for each new user.
+ - Remove the Edit Entries tab once datatables are editable. It isn't user-friendly (was only really for me to edit the tables since I couldn't do so directly) and it makes it far too easy to simply delete important info by mistake.
