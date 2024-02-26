@@ -34,5 +34,7 @@ There are four tabs:
 - Make everything less manual and more editable: 
   - Combine the Create Entries and Track Updates tables - it'd be useful if you didn't have to manually add an ID in. I think it'd be cool to make it so that there is a dropdown where you can select, say, "rejected" or "first round interview"
   - Make entries actually editable after they are confirmed, because at the moment I have to delete the entry and redo it if I want to make changes. If I want to add more notes for example, I want to actually be able to edit it directly.
+    - Consider doing this using the `rhandsontable` package - would require changing a good amount of things (https://jrowen.github.io/rhandsontable/#Shiny)
+    - There is also an `editable = TRUE` parameter in `DT::datatable`; if this works it'd be great but so far I have not seen success. 
  - Figure out how to make Enter count as a line break. For now, I've had to use <br/> which is obviously not ideal.
  - Ultimate aim is to be able to actually publish this as an app that more people can use. 
