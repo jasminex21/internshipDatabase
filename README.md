@@ -18,7 +18,7 @@ There are four tabs:
 
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/55e53de5-ba6e-4fb8-9067-60663a888e1e)
 
-- **Filter Entries**: use SQL commands to filter or alter tables (in case you make a mistake when entering information about an application)
+- **Filter Entries**: use SQL commands to filter or alter tables (in case you make a mistake when entering information about an application). Ideally not something I will keep in updated versions of the app; just here temporarily for convenience.
 
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/6f0c494c-157b-49de-90eb-e04bd14b655f)
 
