@@ -30,7 +30,8 @@ There are four tabs:
 
 ![image](https://github.com/jasminex21/internshipDatabase/assets/109494334/1846161f-193e-4c40-8882-fda37b1dcb2d)
 
-### TODO:
+### TODO (over this summer please):
+- *Potentially* transfer to streamlit and Python over RShiny and R. I assume this will fix the weird line break issues, and possibly helps w editability and customizability 
 - Make everything less manual and more editable: 
   - Combine the Create Entries and Track Updates tables - it'd be useful if you didn't have to manually add an ID in. I think it'd be cool to make it so that there is a dropdown where you can select, say, "rejected" or "first round interview"
   - Make entries actually editable after they are confirmed, because at the moment I have to delete the entry and redo it if I want to make changes. If I want to add more notes for example, I want to actually be able to edit it directly.
@@ -39,3 +40,4 @@ There are four tabs:
  - Figure out how to make Enter count as a line break. For now, I've had to use `<br/>` which is obviously not ideal.
  - Ultimate aim is to be able to actually publish this as an app that more people can use. This would require user authentication for sure. I will also have to figure out how to create/initialize a new database for each new user.
  - Remove the Edit Entries tab once datatables are editable. It isn't user-friendly (was only really for me to edit the tables since I couldn't do so directly) and it makes it far too easy to simply delete important info by mistake.
+ - IDEALLY, if everything above is resolved, it would be very cool to deploy this so that anyone can create their own database. Right now my SQLite database is stored locally and there isn'y any way to just go to a link and access my stuff, and if someone were to run the app it would only show my stuff. User authentication would be nice. But not too fancy bc for me personally that's a turn off, keep it simple. Just a name, email, password and such. 
